@@ -17,7 +17,7 @@ Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，
   - 支持TLS-ALPN challenge
   - 支持DNS challenge
 
-## Caddy如何处理失败的证书申请请求
+## Caddy如何处理失败的证书申请请求？
 - Caddy retries once after a brief pause just in case it was a fluke
 - Caddy pauses briefly, then switches to the next enabled challenge type
 - After all enabled challenge types have been tried, it tries the next configured issuer
