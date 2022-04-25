@@ -57,7 +57,7 @@ plugins:
 
 author:
   name   : "Allen"
-  avatar : "/assets/images/bio-photo.jpg"
+  avatar : "/assets/images/bio-photo.png"
   bio    : "The forgettable little words constrained to a sentence or two goes here."
   links:
     - label: "Website"
