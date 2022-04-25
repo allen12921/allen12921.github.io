@@ -11,8 +11,8 @@ tags:
 Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属。
 
 ## Caddy如何实现自动https?
-- Caddy会通过在后台运行证书管理程序(不会block其他请求处理)。
-- 证书管理进程会通过ACME协议从兼容此协议的CA处申请证书（默认会从Let's Encrypt和ZeroSSL申请）。
+- Caddy会通过在后台运行证书管理程序(不会block其他请求处理)
+- 证书管理进程会通过ACME协议从兼容此协议的CA处申请证书（默认会从Let's Encrypt和ZeroSSL申请）
   - 支持HTTP challenge
   - 支持TLS-ALPN challenge
   - 支持DNS challenge
@@ -27,4 +27,9 @@ Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，
   - Maximum of 1 day between attempts
   - For up to 30 days
 
+## Caddy何时会申请证书?
+- 默认会在启动后自动申请所有配置中所含域名的证书
+- 当a TLS handshake is received for a server name (SNI)时按需申请
+
 > ACME: Automatic Certificate Management Environment
+
