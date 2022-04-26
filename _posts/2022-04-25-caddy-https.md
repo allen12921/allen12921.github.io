@@ -29,6 +29,7 @@ Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，
 
 ## Caddy何时会申请证书?
 - 默认会在启动后自动申请配置中所含域名的证书
+
 ```json
 {
 example.com
@@ -38,7 +39,9 @@ php_fastcgi unix//run/php/php-version-fpm.sock
 file_server
 }
 ```
+
 - 当a TLS handshake is received for a server name (SNI)时按需申请
+
 ```json
 {
         on_demand_tls {
