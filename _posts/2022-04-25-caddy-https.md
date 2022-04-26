@@ -56,7 +56,7 @@ file_server
 ```
 
 ## Caddy将证书保存在哪里？
-Caddy天生设计为集群模式，可无限水平扩展，其运行模式根据caddy.storage配置决定，默认使用file_system，以单机模式工作,不同模式对应的storage module:
+Caddy天生设计为集群模式，可无限水平扩展，其运行模式根据caddy.storage配置决定，默认使用file_system，以单机模式工作,当多台caddy server配置使用相同的storage时，它们便会共享资源，且coordinate certificate management as a cluster，不同模式对应的storage module:
 - 单机模式
   - file_system
 - 集群模式
