@@ -7,6 +7,7 @@ tags:
   - caddy
   - https
 ---
+![Caddy2](/assets/images/caddy.png "caddy")
 # Caddy是什么？
 Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属。
 
