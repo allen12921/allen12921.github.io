@@ -46,6 +46,26 @@ Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询�
     </my_cluster>
 </remote_servers>
 ```
+在所有cluster中的所有CH上创建数据表
+```sql
+CREATE TABLE users
+(
+    user_id UInt64,
+    age Int32,
+    name String,
+) ENGINE = MergeTree()
+PARTITION BY (user_id)
+ORDER BY (age)
+
+```
+在程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`
+```sql
+CREATE TABLE users_all AS users
+ENGINE = Distributed(my_cluster, default, users, user_id)
+SETTINGS
+    fsync_after_insert=0,
+    fsync_directories=0;
+```
 ## 读取操作
 将查询请求转发到多个远端服务器进行并行查询，然后返回合并后的查询结果。
 ```mermaid
@@ -63,7 +83,7 @@ graph LR
   client --> shardB
   client --> shardN  
 ```
-- 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,其分配流程可以是随机也可以按照shard key
+- 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建表时包含`sharding_key`参数
 ```mermaid
 graph LR
   client --> dt_table
