@@ -30,7 +30,7 @@ Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，
   - For up to 30 days
 
 ## Caddy何时会申请证书?
-- 默认会在启动后自动申请配置中所含域名的证书
+- 默认会在启动后自动申请配置中所含域名的证书（适用于事先已经知道所有需要申请证书的域名信息，且都已经将dns解析指向caddy server）
 
 ```
 {
@@ -42,7 +42,7 @@ file_server
 }
 ```
 
-- 当a TLS handshake is received for a server name (SNI)时按需申请
+- 当接收到TLS handshake时，根据的SNI中的server name按需申请(适用于事先不知道所有域名信息，或者域名不在自己的控制范围内)
 
 ```
 {
@@ -56,4 +56,5 @@ file_server
 ```
 
 > ACME: [Automatic Certificate Management Environment](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment)
+> SNI: [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)
 
