@@ -55,5 +55,5 @@ file_server
 }
 ```
 
-> ACME: Automatic Certificate Management Environment
+> ACME: [Automatic Certificate Management Environment](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment)
 
