@@ -25,6 +25,7 @@ Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，
 - 在所有可用的challenge type都试过，依然未能成功，会继续在下一个配置的issuer处申请
   - Let's Encrypt
   - ZeroSSL
+  - Other issuers from configuration
 - 在试过了所有的issuers之后,请求的间隔会进行指数级增长。
   - Maximum of 1 day between attempts
   - For up to 30 days
