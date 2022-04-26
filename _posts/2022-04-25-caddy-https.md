@@ -67,5 +67,6 @@ Caddy天生设计为集群模式，可无限水平扩展，其运行模式根据
   - dynamodb
 
 > ACME: [Automatic Certificate Management Environment](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment)
+
 > SNI: [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)
 
