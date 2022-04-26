@@ -9,7 +9,7 @@ tags:
 ---
 ![Caddy2](/assets/images/caddy.png "caddy")
 # Caddy是什么？
-Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属。
+Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属,因此本文主要基于此功能进行介绍。
 
 ## Caddy如何实现自动https?
 - Caddy会通过在后台运行证书管理程序(不会block其他请求处理)
