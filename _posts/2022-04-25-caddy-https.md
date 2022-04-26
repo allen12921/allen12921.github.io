@@ -9,7 +9,7 @@ tags:
 ---
 ![Caddy2](/assets/images/caddy.png "caddy")
 # Caddy是什么？
-Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属,因此本文主要基于此功能进行介绍。
+Caddy是一款用Go编写的开源web server，虽然它又造了一个轮子，且未拥有其它web server的全部功能，但其依然能在短时间内坐拥海量粉丝，究其缘由，非其自动申请并维护ssl证书功能莫属,因此本文主要基于此功能进行介绍。
 
 ## Caddy如何实现自动https?
 - Caddy会通过在后台运行证书管理程序(不会block其他请求处理)进行证书申请
@@ -54,6 +54,16 @@ file_server
  
 }
 ```
+
+## Caddy将证书保存在哪里？
+Caddy天生设计为集群模式，可无限水平扩展，其运行模式根据caddy.storage配置决定，默认使用file_system，以单机模式工作,不同模式对应的storage module:
+- 单机模式
+  - file_system
+- 集群模式
+  - s3
+  - redis
+  - consul
+  - dynamodb
 
 > ACME: [Automatic Certificate Management Environment](https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment)
 > SNI: [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)
