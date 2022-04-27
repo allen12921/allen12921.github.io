@@ -25,7 +25,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
 [SETTINGS name=value, ...]
 ```
 
-下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表，它的数据存储在my_cluster中所有nodes上的default.users表中:
+下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表,它的数据存储在my_cluster中所有nodes上的default.users表中，注意其中的internal_replication配置:
 ```xml
 <remote_servers>
     <my_cluster>
@@ -33,7 +33,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
         <shard>
             <!-- 可选的。写数据时分片权重。 默认: 1. -->
             <weight>1</weight>
-            <!-- 可选的。是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，只会写入shard中的单个节点，其它节点通过*ReplicaMergeTree表内部实现复制 -->
+            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，DT只会写入shard中的单个节点，其它节点通过*ReplicaMergeTree表内部实现复制 -->
             <internal_replication>false</internal_replication>
             <replica>
                 <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
@@ -103,3 +103,6 @@ graph LR
   dt_table --> shardB
   dt_table --> shardN
 ```
+
+> 参考
+> > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
