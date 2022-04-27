@@ -70,7 +70,7 @@ PARTITION BY (user_id)
 ORDER BY (age)
 
 ```
-在程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`
+在应用程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`(*强烈建议设置sharding_key，这样我们才能通过分布式表进行数据写入*）
 ```sql
 CREATE TABLE users_all AS users
 ENGINE = Distributed(my_cluster, default, users, user_id)
