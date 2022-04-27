@@ -73,6 +73,9 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/alen12921"
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: mailto:zhouhanlun@qq.com
 
 defaults:
   # _posts
