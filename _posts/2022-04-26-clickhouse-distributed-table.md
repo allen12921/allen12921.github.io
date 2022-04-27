@@ -58,7 +58,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
     </my_cluster>
 </remote_servers>
 ```
-在所有cluster中的所有CH上创建数据表
+在cluster中的所有shard上单独创建数据表:
 ```sql
 CREATE TABLE users
 (
@@ -70,7 +70,7 @@ PARTITION BY (user_id)
 ORDER BY (age)
 
 ```
-在应用程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`(*强烈建议设置sharding_key，这样我们才能通过分布式表进行数据写入*）
+在应用程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`(*强烈建议设置sharding_key，这样我们才能通过分布式表进行数据写入*）:
 ```sql
 CREATE TABLE users_all AS users
 ENGINE = Distributed(my_cluster, default, users, user_id)
@@ -121,6 +121,9 @@ graph LR
   dt_table --> shardB
   dt_table --> shardN
 </div>
+
+## 分布式表之使用技巧
+- 巧用sharding_key查询
 
 
 > 参考
