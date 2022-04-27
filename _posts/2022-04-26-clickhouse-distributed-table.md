@@ -89,20 +89,25 @@ graph LR
 ```
 ## 写入操作
 - 直接将请求发送到存储数据的db
-```mermaid
+
+<div class="mermaid">
 graph LR
   client --> shardA
   client --> shardB
   client --> shardN  
-```
+</div>
+  
 - 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建表时包含`sharding_key`参数
-```mermaid
+
+<div class="mermaid">
 graph LR
   client --> dt_table
   dt_table --> shardA
   dt_table --> shardB
   dt_table --> shardN
-```
+</div>
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
+
+<script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>

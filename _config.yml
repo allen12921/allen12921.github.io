@@ -54,7 +54,8 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
-
+mermaid:
+  src: 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'
 author:
   name   : "Allen"
   avatar : "/assets/images/bio-photo.png"
@@ -72,6 +73,9 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/alen12921"
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: mailto:zhouhanlun@qq.com
 
 defaults:
   # _posts
