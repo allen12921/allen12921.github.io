@@ -80,13 +80,14 @@ SETTINGS
 ```
 ## 读取操作
 将查询请求转发到多个远端服务器进行并行查询，然后返回合并后的查询结果。
-```mermaid
+<div class="mermaid">
 graph LR
   client --> dt_table
   dt_table --> shardA
   dt_table --> shardB
   dt_table --> shardN
-```
+</div>
+
 ## 写入操作
 - 直接将请求发送到存储数据的db
 
