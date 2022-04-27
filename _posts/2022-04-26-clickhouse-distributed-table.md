@@ -25,7 +25,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
 [SETTINGS name=value, ...]
 ```
 
-下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表,它的数据存储在my_cluster中所有nodes上的default.users表中，注意其中的internal_replication配置:
+下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表,它的数据存储在my_cluster中所有nodes上的default.users表中，注意其中的internal_replication[^1] 配置:
 ```xml
 <remote_servers>
     <my_cluster>
@@ -108,7 +108,10 @@ graph LR
   dt_table --> shardN
 </div>
 
+
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
+
+[^1]: internal_replication选项为true时,需要和Replication系列表配合使用，由于分布式表和数据副本并无直接联系，二者可单独使用。且为了方便理解，此刻暂不引入数据副本相关内容。
 
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
