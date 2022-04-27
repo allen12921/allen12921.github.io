@@ -13,8 +13,19 @@ Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询�
 
 # 分布式表引擎
 表引擎众多，可能你不会用到所有的类型，但有一种引擎是迟早会用到的，它就是分布式引擎，因为它是当table中数据达到一定量级时，进行水平扩展的主要方式。
+*分布式引擎本身不存储数据*, 但可以在cluster中的多个服务器上进行分布式查询。cluster通过配置文件来定义.
+分布式表创建语句如下:
+```sql
+CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
+(
+    name1 [type1] [DEFAULT|MATERIALIZED|ALIAS expr1],
+    name2 [type2] [DEFAULT|MATERIALIZED|ALIAS expr2],
+    ...
+) ENGINE = Distributed(cluster, database, table[, sharding_key[, policy_name]])
+[SETTINGS name=value, ...]
+```
 
-*分布式引擎本身不存储数据*, 但可以在cluster中的多个服务器上进行分布式查询。cluster通过配置文件来定义
+下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表，它的数据存储在my_cluster中所有nodes上的default.users表中:
 ```xml
 <remote_servers>
     <my_cluster>
@@ -27,7 +38,7 @@ Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询�
             <replica>
                 <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
                 <priority>1</priority>
-                <host>example01-01-1</host>
+                <host>host-sh01-01</host>
                 <port>9000</port>
             </replica>
         </shard>
@@ -35,11 +46,11 @@ Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询�
             <weight>2</weight>
             <internal_replication>false</internal_replication>
             <replica>
-                <host>example01-02-1</host>
+                <host>host-sh02-01</host>
                 <port>9000</port>
             </replica>
             <replica>
-                <host>example01-02-2</host>
+                <host>host-sh02-02</host>
                 <secure>1</secure>
                 <port>9440</port>
             </replica>
