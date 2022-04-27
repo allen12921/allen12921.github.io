@@ -122,9 +122,13 @@ graph LR
   dt_table --> shardN
 </div>
 
-## 分布式表之使用技巧
-- 巧用sharding_key查询
-
+## 分布式表使用技巧
+- 巧用sharding_key,减少查询请求
+  - 查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
+- 化整为零，分散压力
+  - 在cluster中所有shard上都创建分布式表，通过LB将请求按照一定规则转发到shard中
+- 保证数据实时性
+  - 默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有nodes上保存成功后才返回
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
