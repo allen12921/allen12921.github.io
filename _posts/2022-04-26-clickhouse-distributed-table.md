@@ -81,7 +81,7 @@ SETTINGS
 ## 读取操作
 将查询请求转发到多个远端服务器进行并行查询，然后返回合并后的查询结果。
 ```sql
-select name from users_all where user_id in (1,2,3);
+SELECT name FROM users_all WHERE user_id in (1,2,3);
 ```
 <div class="mermaid">
 graph LR
@@ -95,7 +95,7 @@ graph LR
 - 直接将请求发送到存储数据的db
 ```sql
 INSERT INTO
-  users(user_id, age, name)
+  users (user_id, age, name)
 VALUES
   (1, 18, 'King');
 ```
@@ -109,7 +109,7 @@ graph LR
 - 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建表时包含`sharding_key`参数
 ```sql
 INSERT INTO
-  users_all(user_id, age, name)
+  users_all (user_id, age, name)
 VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess');
 ```
