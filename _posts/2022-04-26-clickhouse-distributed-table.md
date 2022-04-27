@@ -53,7 +53,7 @@ CREATE TABLE users
 (
     user_id UInt64,
     age Int32,
-    name String,
+    name String
 ) ENGINE = MergeTree()
 PARTITION BY (user_id)
 ORDER BY (age)
