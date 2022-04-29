@@ -21,11 +21,11 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
     name1 [type1] [DEFAULT|MATERIALIZED|ALIAS expr1],
     name2 [type2] [DEFAULT|MATERIALIZED|ALIAS expr2],
     ...
-) ENGINE = Distributed(cluster, database, table[, sharding_key[, policy_name]])
+) ENGINE = Distributed(cluster, database, table[, sharding_key[^6][, policy_name]])
 [SETTINGS name=value, ...]
 ```
 
-下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表,它的数据存储在my_cluster中所有nodes上的default.users表中，注意其中的internal_replication[^1] 配置:
+下面的例子中我们将会在名为my_cluster的cluster中创建users_all的分布式表,它的数据存储在my_cluster中所有shard上的default.users表中，首先需改所有server上的config.xml，注意其中的internal_replication[^1] 配置:
 ```xml
 <remote_servers>
     <my_cluster>
@@ -113,7 +113,7 @@ INSERT INTO
 VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess');
 ```
-
+  - CH根据shard选取计算表达式 `sharding_key_value % sum_weight`的值来决定将数据保存到哪个shard,每个shard包含其`[’prev_weight’,’prev_weights + weight’)`范围内的数据，其中`prev_weight`为该分片前面的所有分片的权重和。
 <div class="mermaid">
 graph LR
   client --> dt_table
@@ -140,5 +140,5 @@ graph LR
 [^3]: nginx,haproxy,chproxy,cloud elb等
 [^4]: 主要使用到的Atomic
 [^5]: 最健壮的和广泛使用的是MergeTree（合并树）引擎及该系列（*MergeTree）引擎
-
+[^6]: sharding_key必须是整型类型的字段或者返回整数类型的表达式，因为它会被用于计算数据应该写入哪个shard.
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
