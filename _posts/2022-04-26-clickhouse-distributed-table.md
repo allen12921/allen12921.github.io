@@ -123,6 +123,8 @@ graph LR
 </div>
 
 ## 分布式表使用技巧
+- 使用分布式DDL(ON CLUSTER条件)进行表管理
+  - CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在所有cluster中的shard中
 - 巧用sharding_key,减少查询请求
   - 查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
 - 化整为零，分散压力
