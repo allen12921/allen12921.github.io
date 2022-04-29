@@ -13,7 +13,7 @@ Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询�
 
 # 分布式表引擎
 表引擎众多，可能你不会用到所有的类型，但有一种引擎是迟早会用到的，它就是分布式引擎，因为它是当table中数据达到一定量级时，进行水平扩展的主要方式。
-*分布式引擎本身不存储数据*, 但可以在cluster中的多个服务器上进行分布式查询。cluster通过配置文件来定义.
+*分布式引擎本身不存储数据*, 但可以在cluster中的多个服务器上进行分布式并发查询。cluster通过配置文件来定义.
 分布式表创建语句如下:
 ```sql
 CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
@@ -33,7 +33,7 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
         <shard>
             <!-- 可选的。写数据时分片权重。 默认: 1. -->
             <weight>1</weight>
-            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，DT只会写入shard中的单个节点，其它节点通过*ReplicaMergeTree表内部实现复制 -->
+            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
             <internal_replication>false</internal_replication>
             <replica>
                 <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
@@ -106,7 +106,7 @@ graph LR
   client --> shardN  
 </div>
   
-- 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建表时包含`sharding_key`参数
+- 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建分布式表时包含`sharding_key`参数[^2]
 ```sql
 INSERT INTO
   users_all (user_id, age, name)
@@ -126,13 +126,15 @@ graph LR
 - 巧用sharding_key,减少查询请求
   - 查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
 - 化整为零，分散压力
-  - 在cluster中所有shard上都创建分布式表，通过LB将适用的请求按照一定规则转发到shard中
+  - 在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到shard中
 - 保证数据实时性
-  - 默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有nodes上保存成功后才返回
+  - 默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有shard上保存成功后才返回
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
 
-[^1]: internal_replication选项为true时,需要和Replication系列表配合使用，由于分布式表和数据副本并无直接联系，二者可单独使用。且为了方便理解，此刻暂不引入数据副本相关内容。
+[^1]: internal_replication参数为true时,需要和Replication系列表配合使用，由于分布式表和数据副本并无直接联系，二者可单独使用。且为了方便理解，此刻暂不引入数据副本相关内容。
+[^2]: insert_distributed_one_random_shard参数设置为1时，在分布式表定义中不包含sharding_key的情况下，依然可以允许通过分布式表写入数据，此时会随机选择一个shard写入数据。
+[^3]: nginx,haproxy,chproxy,aws elb等
 
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
