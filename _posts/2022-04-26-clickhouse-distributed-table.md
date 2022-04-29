@@ -123,6 +123,7 @@ graph LR
 </div>
 
 ## 分布式表使用技巧
+- 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
   - CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在所有cluster中的shard中
 - 巧用sharding_key,减少查询请求
