@@ -123,18 +123,38 @@ graph LR
 </div>
 
 ## 分布式表使用技巧
-- 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL,减少出错机率。
+- 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
   ```sql
-   SELECT uniq(user_id) FROM user_all WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM user_all WHERE name like '%ask')
+   SELECT uniq(user_id) FROM user_all WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
   ``` 
+  首先会在发起查询的机器运行子查询,其结果会被以临时表(_data1)的形式保存在内存中:
+  ```sql
+  SELECT user_id FROM users_all WHERE name like 'allen%' 
+  ```
+  然后下面的语句以及临时表都会被发送到cluster中的所有机器执行:
+  ```sql
+  SELECT uniq(user_id) FROM users_all WHERE age = 101 AND user_id GLOBAL IN _data1
+  ```
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
-  - CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在cluster中的所有shard中[^7]
+  CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在cluster中的所有shard中[^7]
+  ```sql
+  AlTER TABLE users ON CLUSTER my_cluster ADD COLUMN IF NOT EXISTS gender String AFTER user_id
+  ```
 - 巧用sharding_key,减少查询请求
-  - 查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
+  查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
+  ```sql
+  SELECT age FROM user_all WHERE user_id = '1212322321'
+  ```
 - 化整为零，分散压力
-  - 在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到shard中
+  在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到shard中
 - 保证数据实时性
-  - 默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有shard上保存成功后才返回
+  默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有shard上保存成功后才返回
+  ```sql
+  INSERT INTO
+  users_all (user_id, age, name)
+  VALUES
+  (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
+  ```
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
