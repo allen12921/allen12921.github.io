@@ -125,7 +125,7 @@ graph LR
 ## 分布式表使用技巧
 - 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
-  - CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在所有cluster中的shard中
+  - CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在cluster中的所有shard中[^7]
 - 巧用sharding_key,减少查询请求
   - 查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
 - 化整为零，分散压力
@@ -142,4 +142,5 @@ graph LR
 [^4]: 主要使用到的Atomic
 [^5]: 最健壮的和广泛使用的是MergeTree（合并树）引擎及该系列（*MergeTree）引擎
 [^6]: sharding_key必须是整型类型的字段或者返回整数类型的表达式，因为它会被用于计算数据应该写入哪个shard.
+[^7]: 需要依赖zookeeper
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
