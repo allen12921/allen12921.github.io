@@ -163,9 +163,9 @@ graph LR
   VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
   ```
--  根据业务数据，对shard进行多级分层
+-  在大型集群中,对数据按照逻辑进行分层，不同的业务类型的客户端直连shard server，将不同的类型数据直接写入不同的shard
 ## 待解决的问题
-- 写入分布式表时，部分数据写入失败的处理。
+- 写入分布式表时，部分数据写入失败时的处理。
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
