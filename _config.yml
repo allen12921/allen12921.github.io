@@ -30,10 +30,6 @@ permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
 timezone: Asia/Shanghai # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-comments:
-provider: "disqus" 
-disqus: 
-       shortname: "allen12921"
 
 include:
   - _pages
