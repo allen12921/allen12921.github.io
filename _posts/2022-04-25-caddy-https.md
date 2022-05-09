@@ -2,6 +2,7 @@
 title: "Automatic https your site with Caddy"
 categories:
   - Blog
+layout: post
 tags:
   - web
   - caddy
