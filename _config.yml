@@ -81,6 +81,7 @@ footer:
 
 defaults:
   # _posts
+  comments: true
   - scope:
       path: ""
       type: posts
