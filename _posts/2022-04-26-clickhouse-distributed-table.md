@@ -33,7 +33,8 @@ CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
         <shard>
             <!-- 可选的。写数据时分片权重。 默认: 1. -->
             <weight>1</weight>
-            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
+            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，
+DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
             <internal_replication>false</internal_replication>
             <replica>
                 <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
@@ -125,7 +126,8 @@ graph LR
 ## 分布式表使用技巧
 - 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
   ```sql
-   SELECT uniq(user_id) FROM user_all WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
+   SELECT uniq(user_id) FROM user_all 
+   WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
   ``` 
   首先会在发起查询的机器运行子查询,其结果会被以临时表(_data1)的形式保存在内存中:
   ```sql
@@ -133,7 +135,8 @@ graph LR
   ```
   然后下面的语句以及临时表都会被发送到cluster中的所有机器执行:
   ```sql
-  SELECT uniq(user_id) FROM users_all WHERE age = 101 AND user_id GLOBAL IN _data1
+  SELECT uniq(user_id) FROM users_all 
+  WHERE age = 101 AND user_id GLOBAL IN _data1
   ```
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
   CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在cluster中的所有shard中[^7]
@@ -155,7 +158,7 @@ graph LR
   VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
   ```
-
+-  根据业务数据，对shard进行多级分层
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
 
