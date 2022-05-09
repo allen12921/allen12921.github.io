@@ -1,7 +1,5 @@
 ---
 title: "ClickHouse之Distributed Table Engine"
-layout: posts
-comments: true
 categories:
   - Blog
 tags:
