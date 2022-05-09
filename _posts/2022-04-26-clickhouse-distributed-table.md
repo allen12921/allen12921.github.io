@@ -126,7 +126,7 @@ graph LR
 ## 分布式表使用技巧
 - 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
   ```sql
-   SELECT uniq(user_id) FROM user_all 
+   SELECT uniq(user_id) FROM users_all 
    WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
   ``` 
   首先会在发起查询的机器运行子查询,其结果会被以临时表(_data1)的形式保存在内存中:
@@ -143,10 +143,15 @@ graph LR
   ```sql
   AlTER TABLE users ON CLUSTER my_cluster ADD COLUMN IF NOT EXISTS gender String AFTER user_id
   ```
-- 巧用sharding_key,减少查询请求
-  查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1
+- 合理设置sharding_key,减少查询请求，提高查询效率
+  查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1，排除掉不需要的shards
   ```sql
   SELECT age FROM user_all WHERE user_id = '1212322321'
+  ```
+  利用IN or JOIN在本地表进行查询
+  ```sql
+   SELECT uniq(name) FROM users_all 
+   WHERE age IN (SELECT age FROM users WHERE user_id in (1,2,3))
   ```
 - 化整为零，分散压力
   在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到shard中
@@ -159,6 +164,9 @@ graph LR
   (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
   ```
 -  根据业务数据，对shard进行多级分层
+## 待解决的问题
+- 写入分布式表时，部分数据写入失败的处理。
+
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
 
