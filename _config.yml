@@ -33,7 +33,7 @@ timezone: Asia/Shanghai # https://en.wikipedia.org/wiki/List_of_tz_database_time
 comments:
 provider: "disqus" 
 disqus: 
-       shortname: "allen12921.disqus.com"
+       shortname: "allen12921"
 
 include:
   - _pages
