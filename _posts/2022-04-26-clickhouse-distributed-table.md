@@ -114,7 +114,7 @@ INSERT INTO
 VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess');
 ```
-  - CH根据shard选取计算表达式 `sharding_key_value % sum_weight`的值来决定将数据保存到哪个shard,每个shard包含其`[’prev_weight’,’prev_weights + weight’)`范围内的数据，其中`prev_weight`为该分片前面的所有分片的权重和。
+  CH根据shard选取计算表达式 `sharding_key_value % sum_weight`的值来决定将数据保存到哪个shard,每个shard包含其`[’prev_weight’,’prev_weights + weight’)`范围内的数据，其中`prev_weight`为该分片前面的所有分片的权重和。
 <div class="mermaid">
 graph LR
   client --> dt_table
