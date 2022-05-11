@@ -173,8 +173,8 @@ graph LR
 [^1]: internal_replication参数为true时,需要和Replication系列表配合使用，由于分布式表和数据副本并无直接联系，二者可单独使用。且为了方便理解，此刻暂不引入数据副本相关内容。
 [^2]: insert_distributed_one_random_shard参数设置为1时，在分布式表定义中不包含sharding_key的情况下，依然可以允许通过分布式表写入数据，此时会随机选择一个shard写入数据。
 [^3]: nginx,haproxy,chproxy,cloud elb等
-[^4]: 主要使用到的Atomic
-[^5]: 最健壮的和广泛使用的是MergeTree（合并树）引擎及该系列（*MergeTree）引擎
+[^4]: Atomic,MySQL,MaterializedMySQL,Lazy,PostgreSQL,Replicated,SQLite;主要使用到的Atomic
+[^5]: MergeTree,Log,Integration,Special Engines,最健壮的和广泛使用的是MergeTree（合并树）引擎及该系列（*MergeTree）引擎
 [^6]: sharding_key必须是整型类型的字段或者返回整数类型的表达式，因为它会被用于计算数据应该写入哪个shard
 [^7]: 需要依赖zookeeper
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
