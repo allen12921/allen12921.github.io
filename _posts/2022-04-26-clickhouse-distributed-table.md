@@ -124,7 +124,7 @@ graph LR
 </div>
 
 ## 分布式表使用技巧
-- 查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
+- 小型集群，查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
   ```sql
    SELECT uniq(user_id) FROM users_all 
    WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
@@ -154,7 +154,7 @@ graph LR
    WHERE age IN (SELECT age FROM users WHERE user_id in (1,2,3))
   ```
 - 化整为零，分散压力
-  在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到shard中
+  在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到不同shard中
 - 保证数据实时性
   默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有shard上保存成功后才返回
   ```sql
@@ -163,7 +163,7 @@ graph LR
   VALUES
   (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
   ```
--  在大型集群中,对数据按照业务逻辑进行分层，不同的业务类型的客户端连接不同的业务层DT，创建唯一的共享DT用于全局查询
+-  大型集群,对数据按照业务逻辑进行分层，不同的业务类型的客户端连接不同的业务层DT，创建唯一的共享DT用于全局查询
 ## 待解决的问题
 - 写入分布式表时，部分数据写入失败时的处理。
 
