@@ -80,7 +80,7 @@ SETTINGS
     fsync_directories=0;
 ```
 ## 读取操作
-将查询请求转发到多个远端服务器进行并行查询，然后返回合并后的查询结果。
+将查询请求转发到多个远端服务器进行并行查询[^8]，然后返回合并后的查询结果。
 ```sql
 SELECT name FROM users_all WHERE user_id in (1,2,3);
 ```
@@ -169,7 +169,7 @@ graph LR
 
 > 参考
 > > https://clickhouse.com/docs/en/engines/table-engines/special/distributed
-
+[^8]: 存在特殊情况,当查询条件中包含sharding_key时,可以将请求只转发到保存了对应数据的shards
 [^1]: internal_replication参数为true时,需要和Replication系列表配合使用，由于分布式表和数据副本并无直接联系，二者可单独使用。且为了方便理解，此刻暂不引入数据副本相关内容。
 [^2]: insert_distributed_one_random_shard参数设置为1时，在分布式表定义中不包含sharding_key的情况下，依然可以允许通过分布式表写入数据，此时会随机选择一个shard写入数据。
 [^3]: nginx,haproxy,chproxy,cloud elb等
