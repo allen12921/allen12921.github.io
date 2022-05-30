@@ -16,7 +16,6 @@
 
   <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}">
     {% include_cached skip-links.html %}
-    {% include_cached browser-upgrade.html %}
     {% include_cached masthead.html %}
 
     <div class="initial-content">
@@ -59,5 +58,6 @@
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 {% endif %}
+<script id="dsq-count-scr" src="//allen12921.disqus.com/count.js" async></script>
   </body>
 </html>
