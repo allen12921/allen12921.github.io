@@ -92,7 +92,7 @@ graph LR
   dt_table --> shardN
 </div>
 
-注意再使用了子查询时,需要根据 实际情况选取子查询中的使用local table还是dt table,比如上面的查询语句就被转换成下面的形式发送到各个shard执行
+注意再使用了子查询时,需要根据 实际情况选取子查询中使用local table还是dt table,比如上面的查询语句就被转换成下面的形式发送到各个shard执行
 ```sql
 SELECT uniq(user_id) FROM users WHERE  book_id = 200 AND user_id in (SELECT user_id FROM users where book_id = 100);
 ```
