@@ -144,7 +144,7 @@ graph LR
   ```
   然后下面的语句以及临时表都会被发送到cluster中的所有机器执行:
   ```sql
-  SELECT uniq(user_id) FROM users_all 
+  SELECT uniq(user_id) FROM users 
   WHERE book_id = 101 AND user_id GLOBAL IN _data1
   ```
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
