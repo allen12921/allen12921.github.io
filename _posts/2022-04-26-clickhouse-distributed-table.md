@@ -59,7 +59,7 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
     </my_cluster>
 </remote_servers>
 ```
-在cluster中的所有shard上单独创建数据表:
+在cluster中的所有shard上单独创建数据表(图书借阅记录表):
 ```sql
 CREATE TABLE users
 (
