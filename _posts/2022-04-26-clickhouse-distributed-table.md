@@ -9,7 +9,7 @@ tags:
 ---
 ![ClickHouse](/assets/images/clickhouse-logo.jpeg "ch")
 # Clickhouse是什么？
-Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询分析处理(OLAP),它支持多种database engine[^4]和table engine，不同的table engine[^5]提供不同的特性，以满足不同的业务场景。
+Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询分析处理(OLAP)，单机查询速度大于现有任何数据库，它支持多种database engine[^4]和table engine，不同的table engine[^5]提供不同的特性，以满足不同的业务场景。
 
 # 分布式表引擎
 表引擎众多，可能你不会用到所有的类型，但有一种引擎是迟早会用到的，它就是分布式引擎，因为它是当table中数据达到一定量级时，进行水平扩展的主要方式。
@@ -64,11 +64,10 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
 CREATE TABLE users
 (
     user_id UInt64,
-    age Int32,
-    name String
+    book_id Int32
 ) ENGINE = MergeTree()
 PARTITION BY (user_id)
-ORDER BY (age)
+ORDER BY (book_id)
 
 ```
 在应用程序需要直连的CH上创建分布式表,其中`user_id`为我们指定的`sharding_key`(*强烈建议设置sharding_key，这样我们才能通过分布式表进行数据写入*）:
@@ -82,8 +81,9 @@ SETTINGS
 ## 读取操作
 将查询请求转发到多个远端服务器进行并行查询[^8]，然后返回合并后的查询结果。
 ```sql
-SELECT name FROM users_all WHERE user_id in (1,2,3);
+SELECT uniq(user_id) FROM users_all WHERE  book_id = 200 AND user_id in (SELECT user_id FROM users where book_id = 100);
 ```
+
 <div class="mermaid">
 graph LR
   client --> dt_table
@@ -92,13 +92,22 @@ graph LR
   dt_table --> shardN
 </div>
 
+注意再使用了子查询时,需要根据 实际情况选取子查询中的使用local table还是dt table,比如上面的查询语句就被转换成下面的形式发送到各个shard执行
+```sql
+SELECT uniq(user_id) FROM users WHERE  book_id = 200 AND user_id in (SELECT user_id FROM users where book_id = 100);
+```
+如果子查询中使用的是dt table,那么发送到每个shard上的语句又将会是如下形式:
+```sql
+SELECT uniq(user_id) FROM users WHERE  book_id = 200 AND user_id in (SELECT user_id FROM users_all where book_id = 100);
+```
+
 ## 写入操作
 - 直接将请求发送到存储数据的db
 ```sql
 INSERT INTO
-  users (user_id, age, name)
+  users (user_id, book_id)
 VALUES
-  (1, 18, 'King');
+  (1, 18);
 ```
 <div class="mermaid">
 graph LR
@@ -110,9 +119,9 @@ graph LR
 - 将请求发送到分布式表，再由分布式表所在服务器将请求分配到不同的数据存储服务器,此种模式需要在创建分布式表时包含`sharding_key`参数[^2]
 ```sql
 INSERT INTO
-  users_all (user_id, age, name)
+  users_all (user_id, book_id)
 VALUES
-  (2, 19, 'Queen'),(3, 1, 'Princess');
+  (2, 19),(6, 1);
 ```
   CH根据shard选取计算表达式 `sharding_key_value % sum_weight`的值来决定将数据保存到哪个shard,每个shard包含其`[’prev_weight’,’prev_weights + weight’)`范围内的数据，其中`prev_weight`为该分片前面的所有分片的权重和。
 <div class="mermaid">
@@ -124,34 +133,34 @@ graph LR
 </div>
 
 ## 分布式表使用技巧
-- 小型集群，查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率。
+- 小型集群，查询开启全局GLOBAL IN / GLOBAL JOINs兼容现有SQL并减少出错机率、避免查询放大。
   ```sql
    SELECT uniq(user_id) FROM users_all 
-   WHERE age = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE name like 'allen%')
+   WHERE book_id = 101 AND user_id GLOBAL IN (SELECT user_id FROM users_all WHERE book_id = 200)
   ``` 
   首先会在发起查询的机器运行子查询,其结果会被以临时表(_data1)的形式保存在内存中:
   ```sql
-  SELECT user_id FROM users_all WHERE name like 'allen%' 
+  SELECT user_id FROM users_all WHERE book_id in (100,101,200)
   ```
   然后下面的语句以及临时表都会被发送到cluster中的所有机器执行:
   ```sql
   SELECT uniq(user_id) FROM users_all 
-  WHERE age = 101 AND user_id GLOBAL IN _data1
+  WHERE book_id = 101 AND user_id GLOBAL IN _data1
   ```
 - 使用分布式DDL(ON CLUSTER条件)进行表管理
   CREATE、DROP、ALTER和RENAME都可以使用ON CLUSTER子句以分布式方式运行在cluster中的所有shard中[^7]
   ```sql
-  AlTER TABLE users ON CLUSTER my_cluster ADD COLUMN IF NOT EXISTS gender String AFTER user_id
+  AlTER TABLE users ON CLUSTER my_cluster ADD COLUMN IF NOT EXISTS user_name String AFTER user_id
   ```
 - 合理设置sharding_key,减少查询请求，提高查询效率
   查询条件中包含sharding_key，配合设置optimize_skip_unused_shards=1，排除掉不需要的shards
   ```sql
-  SELECT age FROM user_all WHERE user_id = '1212322321'
+  SELECT book_id FROM user_all WHERE user_id = '1212322321'
   ```
   利用IN or JOIN在本地表进行查询
   ```sql
-   SELECT uniq(name) FROM users_all 
-   WHERE age IN (SELECT age FROM users WHERE user_id in (1,2,3))
+   SELECT uniq(user_id) FROM users_all 
+   WHERE book_id IN (SELECT book_id FROM users WHERE user_id in (1,2,3))
   ```
 - 化整为零，分散压力
   在cluster中所有shard上都创建分布式表，通过LB[^3]将适用的请求按照一定规则转发到不同shard中
@@ -159,9 +168,9 @@ graph LR
   默认数据异步写入，会先保存在分布式表本地再发送到远端shard,通过设置insert_distributed_sync=1来保证所有数据在所有shard上保存成功后才返回
   ```sql
   INSERT INTO
-  users_all (user_id, age, name)
+  users_all (user_id, book_id)
   VALUES
-  (2, 19, 'Queen'),(3, 1, 'Princess') SETTINGS insert_distributed_sync=1;
+  (2, 190),(3, 100) SETTINGS insert_distributed_sync=1;
   ```
 -  大型集群,对数据按照业务逻辑进行分层，不同的业务类型的客户端连接不同的业务层DT，创建唯一的共享DT用于全局查询
 ## 待解决的问题
