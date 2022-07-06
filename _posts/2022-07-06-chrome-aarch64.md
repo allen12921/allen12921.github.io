@@ -24,12 +24,13 @@ gclient runhooks
 gn gen out/Default  --args="target_cpu=\"arm64\" enable_nacl=false symbol_level=0 blink_symbol_level=0 v8_symbol_level=0 is_debug=false dcheck_always_on=false is_official_build=true cc_wrapper=\"ccache\" "
 autoninja -C out/Default   chromium
 ```
-到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致，由于glic关系到整个操作系统的正常运行，因此不建议轻易进行源码编译的方式进行升级。
+到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致。
 
 ```[ec2-user@allen chromium-arm64]$ ./chrome
 ./chrome: /lib64/libm.so.6: version `GLIBC_2.27' not found (required by ./chrome)
 ./chrome: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by ./chrome)
 ```
+*千万不要听信网上的误人教程--直接编译新版glibc的源码，并安装到根目录*
 
 # 结束语
 对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以在epel 仓库中找到chromium包。
