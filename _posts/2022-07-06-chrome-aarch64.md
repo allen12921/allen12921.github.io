@@ -3,27 +3,37 @@ title: "Build chromium for your aarch64 Linux"
 categories:
   - 坑
 tags:
-  - web
-  - caddy
-  - https
+  - browser
 ---
-# chromium是什么？
-Clickhouse是一个面向列的数据库管理系统(DBMS)，用于在线查询分析处理(OLAP)，单机查询速度大于现有任何数据库，它支持多种database engine[^4]和table engine，不同的table engine[^5]提供不同的特性，以满足不同的业务场景。
+# 缘起
+最近有研发同学需要在线上服务器中用Puppeteer来进行在浏览器中截图的操作，于是乎需要安装chrome，x86的机器上yum一键搞定，就在临门一脚准备上线时，突然发现线上还有arm的机器在运行，Google了一番，发现官方居然不提供arm的安装包，且网络中也无存在的对应操作系统可用安装包(OS为Amazone Linux 2)，于是开启了长达一天的踩坑之路，谨以此文献给欲后来者。
 
-# 分布式表引擎
-表引擎众多，可能你不会用到所有的类型，但有一种引擎是迟早会用到的，它就是分布式引擎，因为它是当table中数据达到一定量级时，进行水平扩展的主要方式。
-*分布式引擎本身不存储数据*, 但可以在cluster中的多个服务器上进行分布式并发查询。cluster通过配置文件来定义.
-分布式表创建语句如下:
-```sql
-CREATE TABLE [IF NOT EXISTS] [db.]table_name [ON CLUSTER cluster]
-(
-    name1 [type1] [DEFAULT|MATERIALIZED|ALIAS expr1],
-    name2 [type2] [DEFAULT|MATERIALIZED|ALIAS expr2],
-    ...
-) ENGINE = Distributed(cluster, database, table[, sharding_key[^6][, policy_name]])
-[SETTINGS name=value, ...]
+# 缘灭
+目前源码编译只支持在ubuntu14，16，18，20等LTS的系统进行，且ubuntu 14,16即将被移除支持的OS列表，经测试发现ubuhtu 14已经无法完成编译。
+由于arm资源有限，我们选择在x86上进行交叉编译的方式，以下命令均运行在ubuntu 16（下述过程中会拉取chromium编译相关的各种源码，大约27GB，如果网络不“畅通”，建议提前放弃）
+```shell
+apt install git ccache -y
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+export PATH="$PATH:/home/ec2-user/depot_tools"
+mkdir ~/chromium && cd   ~/chromium
+fetch --nohooks --no-history  chromium
+cd src
+./build/install-build-deps.sh
+./build/linux/sysroot_scripts/install-sysroot.py   --arch=arm
+gclient runhooks
+gn gen out/Default  --args="target_cpu=\"arm64\" enable_nacl=false symbol_level=0 blink_symbol_level=0 v8_symbol_level=0 is_debug=false dcheck_always_on=false is_official_build=true cc_wrapper=\"ccache\" "
+autoninja -C out/Default   chromium
+```
+到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致，由于glic关系到整个操作系统的正常运行，因此不建议轻易进行源码编译的方式进行升级。
+
+```[ec2-user@allen chromium-arm64]$ ./chrome
+./chrome: /lib64/libm.so.6: version `GLIBC_2.27' not found (required by ./chrome)
+./chrome: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by ./chrome)
 ```
 
+# 结束语
+对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以在epel 仓库中找到chromium包。
+由于我们的系统为Amazone Linux 2，所以直接改用epel中的firefox。
 
 > 参考
 > > https://github.com/chromium/chromium/blob/main/build/install-build-deps.sh
