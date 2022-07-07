@@ -35,6 +35,8 @@ autoninja -C out/Default   chromium
 # 结束语
 对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以在epel 仓库中找到chromium包。
 由于我们的系统为Amazone Linux 2，所以直接改用epel中的firefox。
+使用firefox时，依然会有其它问题，在此列举一、二:
+  - Puppeteer使用firefox打开网页时,wait_until参数不支持"networkidle0"值,因此无法保证加载完所有页面内嵌资源(可以使用"domcontentloaded"+sleep不完美替换)
 
 > 参考
 > > https://github.com/chromium/chromium/blob/main/build/install-build-deps.sh
