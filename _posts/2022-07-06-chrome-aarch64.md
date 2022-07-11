@@ -10,7 +10,7 @@ tags:
 
 # 缘灭
 目前源码编译只支持在ubuntu14，16，18，20等LTS的系统进行，且ubuntu 14,16即将被移除支持的OS列表，经测试发现ubuhtu 14已经无法完成编译。
-由于arm资源有限，我们选择在x86上进行交叉编译的方式，以下命令均运行在ubuntu 16（下述过程中会拉取chromium编译相关的各种源码，大约27GB，如果网络不“畅通”，建议提前放弃）
+由于arm资源有限，我们选择在x86上进行交叉编译的方式，以下命令均运行在ubuntu 16（下述过程中会拉取chromium编译相关的各种源码，大约27GB，如果网络不“畅通”，建议提前放弃）,期间可能遇到缺少python依赖的问题，直接pip install安装即可
 ```shell
 apt install git ccache -y
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
@@ -33,7 +33,8 @@ autoninja -C out/Default   chromium
 *千万不要听信网上的误人教程--直接编译新版glibc的源码，并安装到根目录*
 
 # 结束语
-对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以在epel 仓库中找到chromium包。
+对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以通过epel 仓库中安装chromium包。
+对于Ubuntu 16及以上的ARM系统可以通过snap install chromium,建议使用Ubuntu 20
 由于我们的系统为Amazone Linux 2，所以直接改用epel中的firefox。
 使用firefox时，依然会有其它问题，在此列举一、二:
   - Puppeteer使用firefox打开网页时,wait_until参数不支持"networkidle0"值,因此无法保证加载完所有页面内嵌资源(可以使用"domcontentloaded"+sleep不完美替换)
