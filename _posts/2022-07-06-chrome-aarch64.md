@@ -19,7 +19,18 @@ mkdir ~/chromium && cd   ~/chromium
 fetch --nohooks --no-history  chromium
 cd src
 ./build/install-build-deps.sh
-./build/linux/sysroot_scripts/install-sysroot.py   --arch=arm
+./build/linux/sysroot_scripts/install-sysroot.py   --arch=arm64
+cat <<! >../.gclient
+solutions = [
+  {
+    "name": "src",
+    "url": "https://chromium.googlesource.com/chromium/src.git",
+    "managed": False,
+    "custom_deps": {},
+    "custom_vars": {"checkout_pgo_profiles": True},
+  },
+]
+!
 gclient runhooks
 gn gen out/Default  --args="target_cpu=\"arm64\" enable_nacl=false symbol_level=0 blink_symbol_level=0 v8_symbol_level=0 is_debug=false dcheck_always_on=false is_official_build=true cc_wrapper=\"ccache\" "
 autoninja -C out/Default   chromium
