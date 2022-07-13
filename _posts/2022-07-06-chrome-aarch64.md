@@ -41,5 +41,5 @@ autoninja -C out/Default   chromium
 
 > 参考
 > > https://github.com/chromium/chromium/blob/main/build/install-build-deps.sh
-> > https://github.com/allen12921/allen12921.github.io/edit/master/_posts/2022-07-06-chrome-aarch64.md
+> > https://github.com/chromium/chromium/blob/main/docs/linux/build_instructions.md
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
