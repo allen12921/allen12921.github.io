@@ -33,7 +33,7 @@ solutions = [
 !
 gclient runhooks
 gn gen out/Default  --args="target_cpu=\"arm64\" enable_nacl=false symbol_level=0 blink_symbol_level=0 v8_symbol_level=0 is_debug=false dcheck_always_on=false is_official_build=true cc_wrapper=\"ccache\" "
-autoninja -C out/Default   chromium
+autoninja -C out/Default   chrome
 ```
 到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致。
 
