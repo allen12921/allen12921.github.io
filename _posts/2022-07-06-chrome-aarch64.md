@@ -40,13 +40,13 @@ autoninja -C out/Default   chrome
 git rebase-update
 gclient sync
 ```
-到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致。
+到此为止（many hours later），应该可以得到out/Default目录，里面包含了运行chromium所需的"所有"内容，让其打包传送到Amazone Linux 2 arm系统且解决了一堆lib依赖后，发现依然存在如下报错信息，究其原因，乃当前操作系统所用glibc版本低于编译执行文件的版本所致。
 
 ```[ec2-user@allen chromium-arm64]$ ./chrome
 ./chrome: /lib64/libm.so.6: version `GLIBC_2.27' not found (required by ./chrome)
 ./chrome: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by ./chrome)
 ```
-*千万不要听信网上的误人教程--直接编译新版glibc的源码，并安装到根目录*
+*切勿听信网上的误人教程--直接编译新版glibc的源码，并安装到根目录*
 
 # 结束语
 * 对于Centos 7和Amazone Linux 2建议直接改用firefox,如果是Centos 8 可以通过epel 仓库中安装chromium包。
