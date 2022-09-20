@@ -1,4 +1,3 @@
-
 ---
 title: "Http cache 之 Broswer cache"
 categories:
@@ -19,3 +18,4 @@ tags:
 
 > 参考
 > > [https://www.jianshu.com/p/1a1536ab01f1](https://www.jianshu.com/p/1a1536ab01f1)
+<script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
