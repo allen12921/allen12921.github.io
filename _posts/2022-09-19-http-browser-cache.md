@@ -15,6 +15,13 @@ tags:
 - 强制缓存
 - 协商缓存
 
+# 强制缓存:
+涉及的Http Headers及其对应的值:
+- Cache-Control
+
+# 协商缓存
+涉及的Http Headers及其对应的值:
+- Cache-Control
 
 > 参考
 > > [https://www.jianshu.com/p/1a1536ab01f1](https://www.jianshu.com/p/1a1536ab01f1)
