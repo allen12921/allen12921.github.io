@@ -49,7 +49,7 @@ tags:
 
 # 缓存方案
 - 唯一命名资源: file-asw12wiiu.js,设置Cache-Control: max-age: 86400,以让其在浏览器端保持尽量长的有效期。
-- 固定名称资源: index.html,设置Cache-Control: no-cache,以便其进行协商缓存，避免在文件无更改的情况下下载完整内容。(当然对于nginx还可加add_header Last-Modified ""来减少Last-Modified header的传输)
+- 固定名称资源: index.html,设置Cache-Control: no-cache,以便其进行协商缓存，避免在文件无更改的情况下下载完整内容。(当然对于默认开启了etag的nginx，还可通过add_header Last-Modified "";指令来避免Last-Modified header的传输)
 
 > 参考
 > > [RFC9111](https://www.rfc-editor.org/rfc/rfc9111)
