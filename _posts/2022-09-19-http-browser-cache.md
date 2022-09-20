@@ -46,6 +46,11 @@ tags:
 - 刷新(Command+R): 浏览器直接对本地的缓存文件过期，但是会带上If-Modifed-Since，If-None-Match,Cache-Control: max-age=0，这就意味着服务器会对资源检查，返回结果可能是304，也有可能是200。
 - 强制刷新(Command+shift+R): 浏览器直接对本地的缓存文件过期，但是会带上Cache-Control: no-cache，Pragma: no-cache，这就意味着服务器无法对资源进行检查，而是直接返回完整的内容。
 
+
+# 缓存方案
+- 唯一命名资源: file-asw12wiiu.js,设置Cache-Control: max-age: 86400,以让其在浏览器端保持尽量长的有效期。
+- 固定名称资源: index.html,设置Cache-Control: no-cache,以便其进行协商缓存，避免在文件无更改的情况下下载完整内容。(当然对于nginx还可加add_header Last-Modified ""来减少Last-Modified header的传输)
+
 > 参考
 > > [RFC9111](https://www.rfc-editor.org/rfc/rfc9111)
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
