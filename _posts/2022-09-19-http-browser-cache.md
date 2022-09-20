@@ -37,11 +37,11 @@ tags:
 
 当浏览器发送的协商请求同时包含:If-None-Match和If-Modified-Since时，服务端会将两个值都进行对比且先比较Etag的值。
 
-# 完全避免缓存
-所谓完全避免缓存，即是浏览器不在本地存储中保存资源，每次都从服务端下载完整的资源内容。
+# 禁止缓存
+所谓禁止缓存，即是浏览器不在本地存储中保存资源，每次都从服务端下载完整的资源内容。
 涉及的Http Headers及其对应的值:
 - Cache-Control: no-store
 
 > 参考
-> > [https://www.jianshu.com/p/1a1536ab01f1](https://www.jianshu.com/p/1a1536ab01f1)
+> > [RFC9111](https://www.rfc-editor.org/rfc/rfc9111)
 <script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
