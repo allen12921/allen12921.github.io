@@ -14,5 +14,5 @@ tags:
   通过zookeeper保存表的元数据，data parts的变化的日志，leader选举情况,data blocks的checksums。CH之间直接同步变化的data parts。
 # 限制
   - 目前只支持MergeTree系列的表（只需在原MergeTree表引擎前加上Replicated关键字，即为对应的复制表引擎）
-  - 只支持复制INSERT 和 ALTER语句
+  - 只支持复制INSERT,ALTER and TRUNCATE 操作
   - CREATE, DROP, ATTACH, DETACH and RENAME 都只会在当前执行语句的机器上执行（可以结合ON CLUSTER语句在多台执行）
