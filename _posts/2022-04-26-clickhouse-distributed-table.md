@@ -6,6 +6,7 @@ tags:
   - db
   - clickhouse
   - 分布式引擎
+  - sharding
 ---
 ![ClickHouse](/assets/images/clickhouse-logo.jpeg "ch")
 # Clickhouse是什么？
