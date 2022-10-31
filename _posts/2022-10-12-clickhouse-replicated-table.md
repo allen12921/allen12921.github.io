@@ -57,7 +57,7 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
      </node>
 </zookeeper>
 ```
-
+- 利用on cluster创建复制表
   ```sql
   CREATE TABLE IF NOT EXISTS mydb.clients ON CLUSTER my_cluster
 (
