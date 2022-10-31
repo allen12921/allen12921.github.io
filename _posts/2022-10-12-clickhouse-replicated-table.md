@@ -17,6 +17,47 @@ tags:
   - 只支持复制INSERT,ALTER and TRUNCATE 操作
   - CREATE, DROP, ATTACH, DETACH and RENAME 都只会在当前执行语句的机器上执行（可以结合ON CLUSTER语句在多台执行）
 # 一个简单的例子
+- 在config.xml中添加cluster和zk配置
+```xml
+<remote_servers>
+    <my_cluster>
+        <!-- <secret></secret> -->
+        <shard>
+            <!-- 可选的。写数据时分片权重。 默认: 1. -->
+            <weight>1</weight>
+            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，
+DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
+            <internal_replication>true</internal_replication>
+            <replica>
+                <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
+                <priority>1</priority>
+                <host>host-sh01-01</host>
+                <port>9000</port>
+            </replica>
+            <replica>
+                <host>host-sh01-02</host>
+                <port>9000</port>
+            </replica>
+        </shard>
+    </my_cluster>
+</remote_servers>
+<zookeeper incl="zookeeper-servers" optional="true" />
+    <zookeeper>
+      <node>
+        <host>zk01</host>
+        <port>2181</port>
+      </node>
+      <node>
+        <host>zk02</host>
+        <port>2181</port>
+      </node>
+      <node>
+        <host>zk03</host>
+        <port>2181</port>
+     </node>
+</zookeeper>
+```
+
   ```sql
   CREATE TABLE IF NOT EXISTS mydb.clients ON CLUSTER my_cluster
 (
