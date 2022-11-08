@@ -59,13 +59,12 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
 ```
 - 利用on cluster在集群的所有机器上创建复制表
   ```sql
-  CREATE TABLE IF NOT EXISTS mydb.clients ON CLUSTER my_cluster
-(
+  CREATE TABLE IF NOT EXISTS mydb.clients ON CLUSTER my_cluster (
     id              UUID DEFAULT generateUUIDv4(),
     client_id       String,
     created_at      DateTime64(3),
     recorded_at     DateTime DEFAULT now()
-)
+    )
     ENGINE = ReplicatedMergeTree(recorded_at)
         ORDER BY (client_id);
   ```
