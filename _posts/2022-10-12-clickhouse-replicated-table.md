@@ -20,7 +20,8 @@ tags:
   - 对replicated tables读操作不会经过Keeper，因此其性能和读non-replicated table时一致
   - 当读distributed replicated tables时，读的行为还和[max_replica_delay_for_distributed_queries](https://clickhouse.com/docs/en/operations/settings/settings/#settings-max_replica_delay_for_distributed_queries)以及[fallback_to_stale_replicas_for_distributed_queries](https://clickhouse.com/docs/en/operations/settings/settings/#settings-fallback_to_stale_replicas_for_distributed_queries)
 # 写
-  - 由于INSERT操作会在Keeper中添加数个entries,因此其操作时间会比写non-replicated tables时更长
+  - 由于INSERT操作会在Keeper中添加数个entries,因此其操作时间会比写non-replicated tables时更长，所以我们需要尽量将多个insert合并在一起进行batch操作，且每秒不要超过1个INSERT操作
+  - 默认当INSERT在任意一个replic上执行完成时，就会返回成功，如果此CH突然宕机则可能造成数据丢失，我们可以通过修改[insert_quorum](https://clickhouse.com/docs/en/operations/settings/settings/#settings-insert_quorum)来更改其行为
 # 一个简单的例子
 - 在config.xml中添加cluster和zk配置
 ```xml
