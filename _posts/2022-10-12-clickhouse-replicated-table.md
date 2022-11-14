@@ -22,6 +22,7 @@ tags:
 # 写
   - 由于INSERT操作会在Keeper中添加数个entries,因此其操作时间会比写non-replicated tables时更长，所以我们需要尽量将多个insert合并在一起进行batch操作，且每秒不要超过1个INSERT操作
   - 默认当INSERT在任意一个replica上执行完成时，就会返回成功，如果此CH突然宕机则可能造成数据丢失，我们可以通过修改[insert_quorum](https://clickhouse.com/docs/en/operations/settings/settings/#settings-insert_quorum)来更改其行为
+  - 数据在多个ch之间的复制是异步的，且多个replics之间无主备之分，INSERT和ALTER在其运行的CH上执行，然后数据变化异步地被复制到其他replicas
 # 一个简单的例子
 - 在config.xml中添加cluster和zk配置
 ```xml
