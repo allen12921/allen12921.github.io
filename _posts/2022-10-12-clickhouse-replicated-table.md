@@ -15,16 +15,19 @@ tags:
 # 限制
   - 是表级别的引擎，且目前只支持MergeTree系列的表（只需在原MergeTree表引擎前加上Replicated关键字，即为对应的复制表引擎）
   - 只支持复制INSERT,ALTER and TRUNCATE 操作
-  - CREATE, DROP, ATTACH, DETACH and RENAME 都只会在当前执行语句的机器上执行（可以结合ON CLUSTER语句在多台执行）  
+  - CREATE, DROP, ATTACH, DETACH and RENAME 都只会在当前执行语句的机器上执行（可以结合ON CLUSTER语句在多台执行） 
+   
 # 读
   - 对replicated tables读操作不会经过Keeper，因此其性能和读non-replicated table时一致
   - 当读distributed replicated tables时，读的行为还和[max_replica_delay_for_distributed_queries](https://clickhouse.com/docs/en/operations/settings/settings/#settings-max_replica_delay_for_distributed_queries)以及[fallback_to_stale_replicas_for_distributed_queries](https://clickhouse.com/docs/en/operations/settings/settings/#settings-fallback_to_stale_replicas_for_distributed_queries)
+
 # 写
   - 由于INSERT操作会在Keeper中添加数个entries,因此其操作时间会比写non-replicated tables时更长，所以我们需要尽量将多个insert合并在一起进行batch操作，且每秒不要超过1个INSERT操作
   - 默认当INSERT在任意一个replica上执行完成时，就会返回成功，如果此CH突然宕机则可能造成数据丢失，我们可以通过修改[insert_quorum](https://clickhouse.com/docs/en/operations/settings/settings/#settings-insert_quorum)来更改其行为
   - 数据在多个replicas之间的复制是异步的，且多个replics之间无主备之分，INSERT和ALTER在其运行的CH上执行，其产生的数据变化会异步地被复制到其他replicas,执行后台任务的线程数量由[background_schedule_pool_size](https://clickhouse.com/docs/en/operations/settings/settings/#background_schedule_pool_size)决定
   - 每个不大于[max_insert_block_size](https://clickhouse.com/docs/en/operations/settings/settings/#max_insert_block_size)的写入都是具有原子性的
   - INSERT具有简单的去重功能，对于相同data block(相同大小的数据块，以相同的顺序包含相同的行)的连续多次写操作，只会执行一次
+  
 # 一个简单的例子
 - 在config.xml中添加cluster和zk配置
 ```xml
