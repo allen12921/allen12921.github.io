@@ -30,15 +30,13 @@ tags:
   
 # 一个简单的例子
 - 在config.xml中添加cluster和zk配置
-```xml
-    <remote_servers>
+  ```
+  <remote_servers>
     <my_cluster>
-        <!-- <secret></secret> -->
         <shard>
             <!-- 可选的。写数据时分片权重。 默认: 1. -->
             <weight>1</weight>
-            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时，
-DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
+            <!-- 可选的。写入分布式表时是否只将数据写入其中一个副本。默认值:false(将数据写入所有副本),设置为ture时DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表内部机制实现复制 -->
             <internal_replication>true</internal_replication>
             <replica>
                 <!-- 可选的。负载均衡副本的优先级。默认值:1(值越小优先级越高)。 -->
@@ -52,9 +50,8 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
             </replica>
         </shard>
     </my_cluster>
-</remote_servers>
-<zookeeper incl="zookeeper-servers" optional="true" />
-    <zookeeper>
+  </remote_servers>
+  <zookeeper>
       <node>
         <host>zk01</host>
         <port>2181</port>
@@ -67,8 +64,8 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
         <host>zk03</host>
         <port>2181</port>
      </node>
-</zookeeper>
-```
+  </zookeeper>
+  ```
 - 利用on cluster在集群的所有机器上创建复制表
   ```sql
   CREATE TABLE IF NOT EXISTS mydb.clients ON CLUSTER my_cluster (
