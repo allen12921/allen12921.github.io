@@ -31,7 +31,7 @@ tags:
 # 一个简单的例子
 - 在config.xml中添加cluster和zk配置
 ```xml
-<remote_servers>
+    <remote_servers>
     <my_cluster>
         <!-- <secret></secret> -->
         <shard>
@@ -77,10 +77,17 @@ DT只会写入shard中的单个节点，其它节点依赖*ReplicaMergeTree表�
     created_at      DateTime64(3),
     recorded_at     DateTime DEFAULT now()
     )
-    ENGINE = ReplicatedMergeTree(recorded_at)
+    ENGINE = ReplicatedMergeTree()
         ORDER BY (client_id);
   ```
 
-
-
+- 连续写入相同的数据
+  ```sql
+  INSERT INTO mydb.clients (client_id,created_at) VALUES('alan','2022-10-08 09:07:19');
+  INSERT INTO mydb.clients (client_id,created_at) VALUES('alan','2022-10-08 09:07:19');
+  INSERT INTO mydb.clients VALUES('9999999d-f18b-4f32-8ab4-cd651d46c9ad','same','2022-10-08 00:00:19','2022-11-11 09:07:19');
+  INSERT INTO mydb.clients VALUES('9999999d-f18b-4f32-8ab4-cd651d46c9ad','same','2022-10-08 00:00:19','2022-11-11 09:07:19');
+  SELECT id,client_id,created_at,recorded_at FROM mydb.clients;
+  ```
+  
 [^1]: Zookeeper或者ClickHouse Keeper 
