@@ -7,7 +7,7 @@ tags:
   - podman
   - rootless
 ---
-![ClickHouse](/assets/images/replicated-vs-sharding.png "ch")
+![ClickHouse](/assets/images/podman.svg "podman")
 # 什么是Podman?
   - Podman是一个基于容器的开源工具，可以用于管理和运行OCI（Open Container Initiative）容器。
   - Podman与Docker类似，但不需要守护进程，也不需要root权限来运行容器。
