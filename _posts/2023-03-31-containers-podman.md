@@ -27,7 +27,7 @@ tags:
 # Podman与Docker的比较
   - Podman不需要守护进程，而Docker需要。
   - Podman可以以Pod的形式运行容器，而Docker没有这个功能。
-  - Podman可以运行rootless容器，而Docker需要root权限。
+  - Podman默认可运行rootless容器，而Docker需要特别安装设置[^1]。
   - Podman与Docker都遵循OCI规范。
 
-[^1]: place holder
+[^1]: https://docs.docker.com/engine/security/rootless/
