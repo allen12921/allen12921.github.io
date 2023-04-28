@@ -30,5 +30,6 @@ tags:
   - Podman默认可运行rootless容器，而Docker需要特别安装设置[^1]。
   - Podman与Docker都遵循OCI规范。
   - Podman完全兼容Docker CLI且提供更多的选项，因此可以直接通过alias docker=podman来切换命名。
+  - Podman不支持Amazon Linux2,而Docker支持
 
 [^1]: https://docs.docker.com/engine/security/rootless/
