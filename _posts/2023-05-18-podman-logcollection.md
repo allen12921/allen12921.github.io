@@ -33,4 +33,32 @@ outputs:
   - stdout
 ```
 # 如何使用Filebeat收集Podman运行的container日志
-  由于filebeat默认是收集docker所运行的container日志，我们可以通过更改下面的配置来收集Podman运行的container日志:
+  由于filebeat默认是收集docker所运行的container日志，而podman运行的container和docker不尽相同，因此我们需要更改一些filebeat的配置来收集podman运行的container日志:
+- 启动podman service
+```shell
+systemctl enable podman.service&&systemctl start podman.service
+```
+- inputs
+```config
+- type: container
+  stream: stdout
+  paths:
+    - "/home/container_user/.local/share/containers/storage/overlay-containers/*/*/*.log"
+```
+- processors[^1]
+```config
+processors:
+  - add_docker_metadata:
+     host: "tcp://localhost:8888"
+     match_source_index: 7
+```
+- outputs
+```config
+outputs:
+  - stdout
+```
+- 存在的问题: podman运行的container的日志无法保存为json格式(i.e.不支持--log-driver=json-file)
+
+
+[^1]: 关于match_source_index配置的含义可见https://www.elastic.co/guide/en/beats/filebeat/current/add-docker-metadata.html
+<script src="{{ "/assets/js/mermaid.min.js" | relative_url }}"></script>
