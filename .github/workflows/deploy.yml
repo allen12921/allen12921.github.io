@@ -1,0 +1,71 @@
+name: Deploy Jekyll Site
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select deployment environment'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+        default: development
+
+jobs:
+  deploy:
+    name: Build & Deploy (${{ github.event.inputs.environment }})
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          case "${{ github.event.inputs.environment }}" in
+            development)
+              echo "JEKYLL_ENV=development" >> $GITHUB_ENV
+              echo "SITE_URL=http://localhost:4000" >> $GITHUB_ENV
+              echo "DEPLOY_BRANCH=dev" >> $GITHUB_ENV
+              ;;
+            staging)
+              echo "JEKYLL_ENV=staging" >> $GITHUB_ENV
+              echo "SITE_URL=https://staging.allen12921.github.io" >> $GITHUB_ENV
+              echo "DEPLOY_BRANCH=staging" >> $GITHUB_ENV
+              ;;
+            production)
+              echo "JEKYLL_ENV=production" >> $GITHUB_ENV
+              echo "SITE_URL=https://allen12921.github.io" >> $GITHUB_ENV
+              echo "DEPLOY_BRANCH=master" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build Jekyll
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: ${{ env.JEKYLL_ENV }}
+
+      - name: Deploy to GitHub Pages
+        if: ${{ github.event.inputs.environment == 'production' }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
+
+      - name: Upload build artifact (non-production)
+        if: ${{ github.event.inputs.environment != 'production' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ github.event.inputs.environment }}-${{ github.run_number }}
+          path: ./_site
+          retention-days: 3
