@@ -25,11 +25,19 @@ jobs:
             const event = context.payload.action;
             const eventLabel = { opened: '创建', synchronize: '更新', closed: '关闭' }[event] || event;
 
-            const body = [
+            const lines = [
               `### PR ${eventLabel}`,
               `**标题：** ${pr.title}`,
               `**Source Branch SHA：** \`${pr.head.sha}\``,
-            ].join('\n');
+            ];
+
+            if (event === 'closed') {
+              const merged = pr.merged;
+              lines.push(`**状态：** ${merged ? '已合并 ✅' : '未合并关闭 ❌'}`);
+              lines.push(`**目标分支：** \`${pr.base.ref}\``);
+            }
+
+            const body = lines.join('\n');
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
