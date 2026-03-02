@@ -1,0 +1,39 @@
+name: PR Comment
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+
+jobs:
+  comment:
+    name: Comment on PR
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Comment PR info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const event = context.payload.action;
+            const eventLabel = { opened: '创建', synchronize: '更新', closed: '关闭' }[event] || event;
+
+            const body = [
+              `### PR ${eventLabel}`,
+              `**标题：** ${pr.title}`,
+              `**Source Branch SHA：** \`${pr.head.sha}\``,
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });
