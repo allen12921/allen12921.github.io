@@ -3,6 +3,10 @@ name: Deploy Jekyll Site
 on:
   workflow_dispatch:
     inputs:
+      commit_sha:
+        description: "可选：指定 commit SHA；填写后优先于所选分支"
+        required: false
+        type: string    
       environment:
         description: 'Select deployment environment'
         required: true
@@ -20,9 +24,22 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
 
     steps:
+      - name: Resolve deploy ref
+        id: resolve
+        run: |
+          if [ -n "${{ inputs.commit_sha }}" ]; then
+            echo "ref=${{ inputs.commit_sha }}" >> "$GITHUB_OUTPUT"
+            echo "mode=commit_sha" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "mode=branch" >> "$GITHUB_OUTPUT"
+          fi
       - name: Checkout
         uses: actions/checkout@v4
-
+        with:
+          ref: ${{ steps.resolve.outputs.ref }}
+          fetch-depth: 0
+          
       - name: Set environment variables
         run: |
           case "${{ github.event.inputs.environment }}" in
